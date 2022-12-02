@@ -18,6 +18,7 @@ load_dotenv()
 
 
 app = Flask(__name__)
+app.debug=True
 pulled_data = pd.DataFrame()
 app.secret_key = os.getenv("app.secret_key")
 lastfmapi= os.getenv("lastfmapi")
@@ -94,6 +95,7 @@ def getTracks():
 
 @app.route('/generate_rec', methods=['POST', 'GET'])
 def generate_rec():
+    print("1")
 
     token_info = get_token()
     sp = spotipy.Spotify(auth=token_info['access_token'])
@@ -116,7 +118,7 @@ def generate_rec():
     artisturi = artisturi.squeeze()
     artisturi = artisturi.tolist()
 
-    
+    print("2")
     genreseeds = []
     for x in range(len(artisturi)):
         genres = sp.artist(artisturi[x])['genres']
@@ -173,7 +175,7 @@ def generate_rec():
         finrecid = finrecid + recsongsid
         finrecartists = finrecartists + recartists
         finalbumart = finalbumart + albumart
-
+    print("3")
 
     artp = pd.DataFrame(finrecartists)
     arter = artp.iloc[:, 0]
@@ -214,6 +216,7 @@ def generate_rec():
 
     pass_data = pass_data.tolist()
     session["pass_data"] = pass_data
+    print("4")
     return render_template("playlist.html", column_names=display_data.columns.values, row_data=list(display_data.values.tolist()),image_column = " ",username = user_id,zip=zip)
     
 
@@ -246,7 +249,9 @@ def create_playlist():
     flash("Playlist Added")
     return redirect(url_for('home', _external=False))
 
-
+@app.route('/melon', methods=['POST', 'GET'])
+def melon():
+    return render_template("melon.html")
 
 def create_spotify_oauth():
     return SpotifyOAuth(
@@ -256,3 +261,4 @@ def create_spotify_oauth():
         scope="user-top-read,playlist-modify-private",
         show_dialog=True,
         requests_session=False)
+
