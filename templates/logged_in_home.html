@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <div class="loader-wrapper">
+    <span class="loader"><span class="loader-inner"></span></span>
+</div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discover Anytime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  </head>
+  <body style="background: rgb(26, 175, 26)">
+    <nav class="navbar navbar-dark navbar-expand-lg pl-5 bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="home" >Discover Anytime</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse ms-auto" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{username}}
+              </a>
+              <div class="container-fluid">
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="#">Your Spotify Stats</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+              </ul>
+            </li>
+                </div>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div>
+    <h1 class="text-center py-5">Hello!</h1>
+
+    </div>
+
+    <div class="d-grid gap-2 col-3 mx-auto">
+      <a class="btn btn-primary" href="/generate_rec" onclick="loading()" id="generate">
+        <span class="spinner-border spinner-border-sm" id="spinner"></span>
+        
+         Generate Recommendations</a>
+      
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script>
+      function loading() {
+      var v = document.getElementById("generate");
+      var p = documnet.getElementById("spinner");
+      v.className += ('disabled');
+      p.className += ('spinner-border');
+      p.className += ('spinner-border-sm');
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+    {% endfor %}
+<html>
+    <div class="page">
+    <h1 style="text-align: center;">Discover Anytime</h1>
+    <body style="text-align: center;">
+        <div class="button-div">
+        <form action = "/logout" method = "POST">
+            <input class = "logout-button" type="submit" value="Log Out" name = "logout">
+    
+        </form>
+        <form action = "/generate_rec" method = "POST">
+            <input class = "generate-button" type="Submit" value="Generate Recommendations" name = "recommend">
+    
+        </form>
+    </div>    
+    </body>
+
+</html>
+</div>
+
