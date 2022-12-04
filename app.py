@@ -22,7 +22,6 @@ app.secret_key = os.getenv("app.secret_key")
 lastfmapi= os.getenv("lastfmapi")
 lastfmsecret= os.getenv("lastfmsecret")
 
-
 app.config['SESSION_COOKIE_NAME'] = 'COOKIEMONSTER'
 
 TOKEN_INFO = "token_info"
@@ -35,7 +34,6 @@ TOKEN_INFO = "token_info"
 def home():
     if session.get('logged_in') == True:
         try:
-            print(log_discover_button)
             token_info = session.get(TOKEN_INFO, None)
             sp = spotipy.Spotify(auth=token_info['access_token'])
             user_id = sp.current_user()
@@ -94,7 +92,7 @@ def getTracks():
 
 @app.route('/generate_rec', methods=['POST', 'GET'])
 def generate_rec():
-    log_discover_button = pd.read_csv("generate_log.csv")
+    log_discover_button = pd.read_csv("generatelog.csv")
     print("1")
     currenttime = str(datetime.now())
     token_info = get_token()
@@ -103,9 +101,24 @@ def generate_rec():
     user_id = user_id['id']
     tracklist = (sp.current_user_top_tracks(limit=5, offset=0, time_range='medium_term'))
     
-    log_info = [currenttime,user_id]
-    log_discover_button.loc[len(log_discover_button)] = log_info
-    log_discover_button.to_csv("generate_log.csv")
+    logged_dates = (log_discover_button['Date']).tolist()
+    logged_users = (log_discover_button['User']).tolist()
+    
+    print(logged_dates)
+    print(logged_users)
+    
+    logged_dates.append(currenttime)
+    logged_users.append(user_id)
+
+    print(logged_dates)
+    print(logged_users)
+    
+    #zippedlog = list(zip(logged_dates,logged_dates))
+
+    logged_data = {'Date': logged_dates, 'User': logged_users}
+    log_discover_button = pd.DataFrame(data=logged_data,columns=["Date","User"])
+    print(log_discover_button)
+    log_discover_button.to_csv("generatelog.csv")
     
     first = pd.DataFrame(tracklist['items'])
 
