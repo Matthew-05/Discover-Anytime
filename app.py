@@ -12,14 +12,12 @@ import requests
 from collections import Counter
 from datetime import datetime
 import os
+from datetime import datetime
 
 load_dotenv()
 
-
-
 app = Flask(__name__)
 app.debug=True
-pulled_data = pd.DataFrame()
 app.secret_key = os.getenv("app.secret_key")
 lastfmapi= os.getenv("lastfmapi")
 lastfmsecret= os.getenv("lastfmsecret")
@@ -37,6 +35,7 @@ TOKEN_INFO = "token_info"
 def home():
     if session.get('logged_in') == True:
         try:
+            print(log_discover_button)
             token_info = session.get(TOKEN_INFO, None)
             sp = spotipy.Spotify(auth=token_info['access_token'])
             user_id = sp.current_user()
@@ -95,14 +94,19 @@ def getTracks():
 
 @app.route('/generate_rec', methods=['POST', 'GET'])
 def generate_rec():
+    log_discover_button = pd.read_csv("generate_log.csv")
     print("1")
-
+    currenttime = str(datetime.now())
     token_info = get_token()
     sp = spotipy.Spotify(auth=token_info['access_token'])
     user_id = sp.current_user()
     user_id = user_id['id']
     tracklist = (sp.current_user_top_tracks(limit=5, offset=0, time_range='medium_term'))
-
+    
+    log_info = [currenttime,user_id]
+    log_discover_button.loc[len(log_discover_button)] = log_info
+    log_discover_button.to_csv("generate_log.csv")
+    
     first = pd.DataFrame(tracklist['items'])
 
     songtotal = pd.DataFrame.from_dict(first)
@@ -203,7 +207,7 @@ def generate_rec():
     finrecnames = finrecnames[0].str[:20]
 
     recommended_data[' '] = finarta
-    recommended_data['Rec. Song Names'] = finrecnames
+    recommended_data['Song'] = finrecnames
     recommended_data['Artist'] = arter
     recommended_data['Rec. Song IDs'] = finrecid
     
@@ -262,3 +266,6 @@ def create_spotify_oauth():
         show_dialog=True,
         requests_session=False)
 
+@app.route('/discover-again', methods=['POST', 'GET'])
+def discoveragain():
+    return generate_rec()

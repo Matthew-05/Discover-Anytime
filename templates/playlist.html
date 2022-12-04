@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Discover Anytime</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   </head>
   <body style="background: rgb(111, 238, 111)">
     <nav class="navbar navbar-dark navbar-expand-lg pl-5 bg-dark">
@@ -35,9 +36,8 @@
     <h1 style="text-align: center;">Discover Anytime</h1>
     </div>
     <div class="d-grid gap-2 col-1">
-      <a class="btn btn-primary" href="/generate_rec" onclick="loading()" id="generate"> Generate New
-      <a class="btn btn-primary" href="/create_playlist" id="playlist"> Save Playlist
-      </a>
+      <button type="button" class="btn btn-primary" id="generate_rec">Create a different Playlist</button>
+      <a class="btn btn-primary" href="/create_playlist" id="playlist"> Save Playlist</a>
       </div>
       <div>
     <table class ="center" style="margin-left:auto;margin-right:auto; text-align: center; padding: 10%;">
@@ -61,5 +61,20 @@
   </table>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+  <script>
+    $(document).ready(function() {
+      $("#generate_rec").click(function() {
+        // disable button
+        $(this).prop("disabled", true);
+        // add spinner to button
+        $(this).html(
+          '<i class="spinner-border spinner-border-sm"></i> loading...'
+        );
+        window.location.href="/generate_rec";
+  
+      });
+  });
+    </script>
   </body>
 </html>
