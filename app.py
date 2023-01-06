@@ -22,6 +22,9 @@ app.secret_key = os.getenv("app.secret_key")
 lastfmapi= os.getenv("lastfmapi")
 lastfmsecret= os.getenv("lastfmsecret")
 
+spotsecret= os.getenv("spotsecret")
+SPOTIPY_CLIENT_ID= os.getenv("SPOTIPY_CLIENT_ID")
+
 app.config['SESSION_COOKIE_NAME'] = 'COOKIEMONSTER'
 
 TOKEN_INFO = "token_info"
@@ -92,8 +95,12 @@ def getTracks():
 
 @app.route('/generate_rec', methods=['POST', 'GET'])
 def generate_rec():
+    try:
+        token_info = get_token()
+    except:
+        print("User not logged in")
+        return redirect(url_for("login", _external=False))
     log_discover_button = pd.read_csv("generatelog.csv")
-    print("1")
     currenttime = str(datetime.now())
     token_info = get_token()
     sp = spotipy.Spotify(auth=token_info['access_token'])
@@ -104,16 +111,9 @@ def generate_rec():
     logged_dates = (log_discover_button['Date']).tolist()
     logged_users = (log_discover_button['User']).tolist()
     
-    print(logged_dates)
-    print(logged_users)
-    
     logged_dates.append(currenttime)
     logged_users.append(user_id)
-
-    print(logged_dates)
-    print(logged_users)
     
-    #zippedlog = list(zip(logged_dates,logged_dates))
 
     logged_data = {'Date': logged_dates, 'User': logged_users}
     log_discover_button = pd.DataFrame(data=logged_data,columns=["Date","User"])
@@ -135,7 +135,6 @@ def generate_rec():
     artisturi = artisturi.squeeze()
     artisturi = artisturi.tolist()
 
-    print("2")
     genreseeds = []
     for x in range(len(artisturi)):
         genres = sp.artist(artisturi[x])['genres']
@@ -171,8 +170,6 @@ def generate_rec():
     finrecid = []
     finrecartists = []
     finalbumart  = []
-    print(songuri)
-    print(artisturi)
     for p in range(lengtha):
         print(p)
         tempsongurilist = [songuri[p]]
@@ -192,15 +189,17 @@ def generate_rec():
         finrecid = finrecid + recsongsid
         finrecartists = finrecartists + recartists
         finalbumart = finalbumart + albumart
-    print("3")
 
     artp = pd.DataFrame(finrecartists)
+    print(artp)
+    artp.to_excel("testing.xlsx")
     arter = artp.iloc[:, 0]
     arter = pd.DataFrame(arter)
     arter.columns = ['Artist Name'] 
     arter = arter.astype(str)
-    arter = arter['Artist Name'].apply(lambda st: st[st.find("'name': '")+1:st.find("', 'type':")])
+    arter = arter['Artist Name'].apply(lambda st: st[st.find("'name': '")+1:st.find("type':")])
     arter = arter.str.removeprefix("name': '")
+    arter = arter.str[:-4]
     arter = arter.squeeze()
     arter = arter.tolist()
 
@@ -218,6 +217,7 @@ def generate_rec():
 
     finrecnames = pd.DataFrame(finrecnames)
     finrecnames = finrecnames[0].str[:20]
+    
 
     recommended_data[' '] = finarta
     recommended_data['Song'] = finrecnames
@@ -233,7 +233,6 @@ def generate_rec():
 
     pass_data = pass_data.tolist()
     session["pass_data"] = pass_data
-    print("4")
     return render_template("playlist.html", column_names=display_data.columns.values, row_data=list(display_data.values.tolist()),image_column = " ",username = user_id,zip=zip)
     
 
@@ -260,7 +259,7 @@ def create_playlist():
     user_id = user_id['id']
     listedsongs = session.get("pass_data")
     print(user_id)
-    playlist = sp.user_playlist_create(user_id,"Created_Playlist",public=None,collaborative=None, description=None)
+    playlist = sp.user_playlist_create(user_id,"Discover Anytime",public=None,collaborative=None, description="Playlist was created with discoveranytime.com")
     playlist_id = playlist["id"]
     sp.playlist_add_items(playlist_id, listedsongs)
     flash("Playlist Added")
@@ -272,8 +271,8 @@ def melon():
 
 def create_spotify_oauth():
     return SpotifyOAuth(
-        client_id='119bbbdf4b72475b8ae6a2766285c60d',
-        client_secret='a3b6fddb7b9643d192908573f1b2f1e5',
+        client_id=SPOTIPY_CLIENT_ID,
+        client_secret=spotsecret,
         redirect_uri=url_for('redirectPage', _external=True),
         scope="user-top-read,playlist-modify-private",
         show_dialog=True,
