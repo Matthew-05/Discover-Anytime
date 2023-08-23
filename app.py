@@ -18,11 +18,9 @@ load_dotenv()
 
 app = Flask(__name__)
 app.debug=True
-app.secret_key = os.getenv("app.secret_key")
-lastfmapi= os.getenv("lastfmapi")
-lastfmsecret= os.getenv("lastfmsecret")
+app.secret_key = os.getenv("secret_key")
 
-spotsecret= os.getenv("spotsecret")
+SPOTIPY_CLIENT_SECRET= os.getenv("SPOTIPY_CLIENT_SECRET")
 SPOTIPY_CLIENT_ID= os.getenv("SPOTIPY_CLIENT_ID")
 
 app.config['SESSION_COOKIE_NAME'] = 'COOKIEMONSTER'
@@ -272,7 +270,7 @@ def melon():
 def create_spotify_oauth():
     return SpotifyOAuth(
         client_id=SPOTIPY_CLIENT_ID,
-        client_secret=spotsecret,
+        client_secret=SPOTIPY_CLIENT_SECRET,
         redirect_uri=url_for('redirectPage', _external=True),
         scope="user-top-read,playlist-modify-private",
         show_dialog=True,
